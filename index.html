@@ -18,16 +18,12 @@
             color: var(--text); margin: 0; padding: 15px; min-height: 100vh;
         }
         .container { max-width: 900px; margin: auto; }
-        
         header { text-align: center; padding: 30px 10px; }
         h1 { 
             font-size: 3rem; font-weight: 800; margin: 0; letter-spacing: -2px;
             background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .sub-text { opacity: 0.7; font-size: 0.9rem; margin-top: 10px; }
-
-        /* Formulario Estilo Moderno */
         .form-card { 
             background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border); padding: 30px; border-radius: 30px;
@@ -35,139 +31,81 @@
         }
         .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .group { display: flex; flex-direction: column; gap: 8px; }
-        label.main-label { font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; padding-left: 5px; }
+        label { font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
         input[type="text"] { 
             background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); 
-            color: white; padding: 14px; border-radius: 15px; font-size: 1rem; outline: none; transition: 0.3s;
+            color: white; padding: 14px; border-radius: 15px; font-size: 1rem; outline: none;
         }
-        input:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
-
-        /* Cuadrícula de Categorías */
-        .instruction { color: var(--neon-purple); font-weight: 800; font-size: 0.85rem; text-align: center; margin: 20px 0; }
         .grid-cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .cat-box { 
-            background: var(--glass); border-radius: 22px; padding: 20px; border: 1px solid var(--glass-border);
-            transition: 0.3s ease;
-        }
-        .cat-box h3 { margin: 0 0 15px 0; font-size: 1rem; color: var(--neon-blue); display: flex; align-items: center; gap: 10px; }
-        
-        /* Botones de Habilidad */
+        .cat-box { background: var(--glass); border-radius: 22px; padding: 20px; border: 1px solid var(--glass-border); }
+        .cat-box h3 { margin: 0 0 15px 0; font-size: 1rem; color: var(--neon-blue); border-bottom: 1px solid rgba(56, 189, 248, 0.2); padding-bottom: 5px; }
         .hab-item { 
             display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.2);
-            padding: 12px; border-radius: 14px; margin-bottom: 8px; cursor: pointer;
-            border: 1px solid transparent; transition: 0.2s; font-size: 0.85rem;
+            padding: 12px; border-radius: 14px; margin-bottom: 8px; font-size: 0.85rem; cursor: pointer;
         }
-        .hab-item:hover { background: rgba(255,255,255,0.05); }
-        .hab-item input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--neon-blue); }
-        .hab-item div span { display: block; font-size: 0.7rem; color: #64748b; line-height: 1.2; margin-top: 2px; }
-
+        .hab-item div span { display: block; font-size: 0.7rem; color: #64748b; margin-top: 2px; }
         .btn-glow { 
             width: 100%; padding: 20px; border-radius: 20px; border: none; margin-top: 40px;
             background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
             color: white; font-size: 1.2rem; font-weight: 800; cursor: pointer;
-            transition: 0.4s; box-shadow: 0 0 20px rgba(192, 132, 252, 0.3);
         }
-        .btn-glow:hover { transform: translateY(-3px); box-shadow: 0 0 35px rgba(192, 132, 252, 0.5); }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <header>
-        <h1>SERVIR 🚀</h1>
-        <p class="sub-text">Test de Habilidades y Talentos para la Misión</p>
-    </header>
-
+    <header><h1>SERVIR 🚀</h1><p>Test de Habilidades y Talentos</p></header>
     <form action="https://formspree.io/f/TU_ID_AQUÍ" method="POST" class="form-card">
-        
         <div class="input-grid">
-            <div class="group">
-                <label class="main-label">Nombre y Apellidos</label>
-                <input type="text" name="Nombre" placeholder="Tu nombre completo" required>
-            </div>
-            <div class="group">
-                <label class="main-label">N° DNI</label>
-                <input type="text" name="DNI" maxlength="8" placeholder="8 dígitos" required>
-            </div>
-            <div class="group">
-                <label class="main-label">N° Celular</label>
-                <input type="text" name="Celular" maxlength="9" placeholder="WhatsApp" required>
-            </div>
+            <div class="group"><label>Nombre y Apellidos</label><input type="text" name="Nombre" required></div>
+            <div class="group"><label>N° DNI</label><input type="text" name="DNI" maxlength="8" required></div>
+            <div class="group"><label>WhatsApp</label><input type="text" name="Celular" maxlength="9" required></div>
         </div>
-
-        <div class="instruction">✨ Elige máximo 2 opciones por categoría</div>
-
+        <p style="color:var(--neon-purple); font-weight:800; text-align:center;">Selecciona máximo 2 por categoría</p>
         <div class="grid-cats">
-            <div class="cat-box">
-                <h3>🥗 S - SALUD</h3>
-                <label class="hab-item"><input type="checkbox" name="Salud[]" value="Nutrición"><div>Nutrición<span>Recetas y talleres de cocina.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Salud[]" value="Personal Salud"><div>Personal de salud<span>Médicos, enfermeros, técnicos.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Salud[]" value="Natural"><div>Natural<span>Uso de plantas medicinales.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Salud[]" value="Prevención"><div>Prevención<span>Charlas de adicciones.</span></div></label>
+            <div class="cat-box"><h3>🥗 S - SALUD</h3>
+                <label class="hab-item"><input type="checkbox" name="Salud[]" value="Nutrición"><div>Nutrición<span>Recetas y cocina.</span></div></label>
+                <label class="hab-item"><input type="checkbox" name="Salud[]" value="Personal Salud"><div>Salud Pro<span>Médicos y enfermeros.</span></div></label>
+                <label class="hab-item"><input type="checkbox" name="Salud[]" value="Natural"><div>Natural<span>Plantas medicinales.</span></div></label>
             </div>
-
-            <div class="cat-box">
-                <h3>📖 E - ENSEÑANZA</h3>
+            <div class="cat-box"><h3>📖 E - ENSEÑANZA</h3>
                 <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Biblia"><div>Biblia<span>Instructor bíblico.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Maestro"><div>Maestro<span>Clases de menores o Escuela Sabática.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Púlpito"><div>Púlpito<span>Predicación y dirección de cultos.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Profecía"><div>Profecía<span>Daniel y Apocalipsis.</span></div></label>
+                <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Maestro"><div>Maestro<span>Escuela Sabática.</span></div></label>
+                <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Pulpito"><div>Púlpito<span>Predicación.</span></div></label>
             </div>
-
-            <div class="cat-box">
-                <h3>🤝 R - RELACIONES</h3>
+            <div class="cat-box"><h3>🤝 R - RELACIONES</h3>
                 <label class="hab-item"><input type="checkbox" name="Relaciones[]" value="Visitación"><div>Visitación<span>Hogares y enfermos.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Relaciones[]" value="Hospitalidad"><div>Hospitalidad<span>Anfitrión de Grupos Pequeños.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Relaciones[]" value="Recepción"><div>Recepción<span>Bienvenida en el templo.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Relaciones[]" value="Idiomas"><div>Idiomas<span>Traducción o señas.</span></div></label>
+                <label class="hab-item"><input type="checkbox" name="Relaciones[]" value="Hospitalidad"><div>Hospitalidad<span>Anfitrión GP.</span></div></label>
+                <label class="hab-item"><input type="checkbox" name="Relaciones[]" value="Recepción"><div>Recepción<span>Bienvenida visitas.</span></div></label>
             </div>
-
-            <div class="cat-box">
-                <h3>📱 V - VIRTUAL</h3>
-                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Redes"><div>Redes<span>Facebook, Instagram, WhatsApp.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Audio/Video"><div>Producción<span>Sonido, micros y edición.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Diseño"><div>Diseño<span>Folletos y anuncios digitales.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Sistemas"><div>Sistemas<span>Excel y bases de datos.</span></div></label>
+            <div class="cat-box"><h3>📱 V - VIRTUAL</h3>
+                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Redes"><div>Redes<span>Social Media.</span></div></label>
+                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Audio/Video"><div>Audio/Video<span>Producción.</span></div></label>
+                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Diseño"><div>Diseño<span>Folletos y anuncios.</span></div></label>
             </div>
-
-            <div class="cat-box">
-                <h3>🏗️ I - INFRAESTRUCTURA</h3>
-                <label class="hab-item"><input type="checkbox" name="Infra[]" value="Mantto"><div>Mantenimiento<span>Electricidad, pintura, reparaciones.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Infra[]" value="Logística"><div>Logística<span>Montaje de eventos.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Infra[]" value="Decoración"><div>Decoración<span>Arreglo de altar y eventos.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Infra[]" value="Seguridad"><div>Seguridad<span>Vigilancia y orden.</span></div></label>
+            <div class="cat-box"><h3>🏗️ I - INFRAESTRUCTURA</h3>
+                <label class="hab-item"><input type="checkbox" name="Infra[]" value="Mantto"><div>Mantto<span>Reparaciones.</span></div></label>
+                <label class="hab-item"><input type="checkbox" name="Infra[]" value="Logística"><div>Logística<span>Montaje eventos.</span></div></label>
+                <label class="hab-item"><input type="checkbox" name="Infra[]" value="Decoración"><div>Decoración<span>Arreglo altar.</span></div></label>
             </div>
-
-            <div class="cat-box">
-                <h3>💰 R - RECURSOS</h3>
+            <div class="cat-box"><h3>💰 R - RECURSOS</h3>
                 <label class="hab-item"><input type="checkbox" name="Recursos[]" value="Música"><div>Música<span>Canto o instrumentos.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Recursos[]" value="Finanzas"><div>Finanzas<span>Contabilidad y tesorería.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Recursos[]" value="Manualidades"><div>Manualidades<span>Arte para talleres.</span></div></label>
-                <label class="hab-item"><input type="checkbox" name="Recursos[]" value="Secretaría"><div>Secretaría<span>Actas, cartas y archivos.</span></div></label>
+                <label class="hab-item"><input type="checkbox" name="Recursos[]" value="Finanzas"><div>Finanzas<span>Contabilidad.</span></div></label>
+                <label class="hab-item"><input type="checkbox" name="Recursos[]" value="Secretaría"><div>Secretaría<span>Actas y archivos.</span></div></label>
             </div>
         </div>
-
-        <button type="submit" class="btn-glow">ENVIAR MIS DATOS AL SISTEMA ⚡</button>
+        <button type="submit" class="btn-glow">ENVIAR MIS DATOS ⚡</button>
     </form>
 </div>
-
 <script>
-    // Lógica para limitar a 2 opciones por categoría
-    const categorias = ["Salud[]", "Enseñanza[]", "Relaciones[]", "Virtual[]", "Infra[]", "Recursos[]"];
-    
-    categorias.forEach(nombre => {
-        const checkboxes = document.querySelectorAll(`input[name="${nombre}"]`);
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', () => {
-                const marcados = document.querySelectorAll(`input[name="${nombre}"]:checked`);
-                if (marcados.length > 2) {
-                    checkbox.checked = false;
-                    alert("¡Atención! Solo puedes seleccionar un máximo de 2 opciones por categoría.");
-                }
-            });
-        });
+    const cats = ["Salud[]", "Enseñanza[]", "Relaciones[]", "Virtual[]", "Infra[]", "Recursos[]"];
+    cats.forEach(n => {
+        const cbs = document.querySelectorAll(`input[name="${n}"]`);
+        cbs.forEach(cb => cb.addEventListener('change', () => {
+            if(document.querySelectorAll(`input[name="${n}"]:checked`).length > 2) {
+                cb.checked = false; alert("Selecciona máximo 2 por categoría");
+            }
+        }));
     });
 </script>
-
 </body>
 </html>
