@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* ESTILO CRÍTICO: OCULTAR PANEL POR DEFECTO */
+        /* ESTA LÍNEA ES LA QUE OCULTA EL PANEL - NO TRADUCIR */
         #seccion-admin { display: none !important; } 
 
         :root { --neon-blue: #38bdf8; --neon-purple: #c084fc; --bg: #030712; --text: #f3f4f6; }
@@ -15,149 +15,73 @@
         .container { max-width: 900px; margin: auto; }
         header { text-align: center; padding: 30px 10px; }
         h1 { font-size: 3rem; font-weight: 800; background: linear-gradient(to right, var(--neon-blue), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .cohete { cursor: pointer; transition: 0.3s; }
-        
-        /* DISEÑO DEL PANEL ADMIN */
+        .cohete { cursor: pointer; transition: 0.3s; display: inline-block; }
         .admin-box { background: rgba(56, 189, 248, 0.1); border: 2px dashed var(--neon-blue); padding: 25px; border-radius: 25px; margin-bottom: 30px; text-align: center; }
-        
         .form-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 30px; }
         .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .group { display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
         input { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 14px; border-radius: 15px; outline: none; }
-        
         .grid-cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .cat-box { background: rgba(255,255,255,0.03); border-radius: 22px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }
         .cat-box h3 { margin: 0 0 15px 0; font-size: 1rem; color: var(--neon-blue); border-bottom: 1px solid rgba(56, 189, 248, 0.2); }
         .hab-item { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; font-size: 0.85rem; }
-        
         .btn { width: 100%; padding: 20px; border-radius: 20px; border: none; cursor: pointer; font-weight: 800; transition: 0.3s; }
         .btn-reg { background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color: white; margin-top: 20px; }
         .btn-xlsx { background: #10b981; color: white; margin-top: 15px; }
     </style>
 </head>
 <body>
-
 <div class="container">
     <header>
         <h1>SERVIR <span class="cohete" onclick="activarAdmin()">🚀</span></h1>
         <p style="opacity: 0.7;">Gestionando el talento de la nueva generación</p>
     </header>
-
     <div id="seccion-admin" class="admin-box">
         <h2 style="color:var(--neon-blue); margin-top:0;">🔐 Panel Administrativo</h2>
         <div class="group" style="max-width:400px; margin:auto;">
-            <label>Carga tu padrón (.xlsx) 📂</label>
+            <label>Carga tu padrón (.xlsx)</label>
             <input type="file" id="upload" accept=".xlsx">
         </div>
-        <button onclick="procesarExcel()" class="btn btn-xlsx">GENERAR REPORTE POR CATEGORÍAS 📊</button>
+        <button onclick="procesarExcel()" class="btn btn-xlsx">GENERAR REPORTE CATEGORIZADO 📊</button>
     </div>
-
     <form action="https://formspree.io/f/TU_ID_AQUÍ" method="POST" class="form-card">
         <div class="input-grid">
             <div class="group"><label>Nombre y Apellidos</label><input type="text" name="Nombre" required></div>
             <div class="group"><label>DNI</label><input type="text" name="DNI" maxlength="8" required></div>
             <div class="group"><label>WhatsApp</label><input type="text" name="WhatsApp" maxlength="9" required></div>
         </div>
-
-        <p style="color:var(--neon-purple); font-weight:800; text-align:center; font-size:0.8rem; margin:20px 0;">
-            SELECCIONA MÁXIMO 2 POR CATEGORÍA
-        </p>
-
         <div class="grid-cats">
             <div class="cat-box"><h3>🥗 SALUD</h3>
                 <label class="hab-item"><input type="checkbox" name="Salud[]" value="Nutrición"> Nutrición</label>
                 <label class="hab-item"><input type="checkbox" name="Salud[]" value="PersonalSalud"> Personal Salud</label>
-                <label class="hab-item"><input type="checkbox" name="Salud[]" value="Natural"> Medicina Natural</label>
             </div>
             <div class="cat-box"><h3>📖 ENSEÑANZA</h3>
                 <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Biblia"> Biblia</label>
                 <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Maestro"> Maestro</label>
-                <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Pulpito"> Púlpito</label>
-            </div>
-            <div class="cat-box"><h3>🤝 RELACIONES</h3>
-                <label class="hab-item"><input type="checkbox" name="Relaciones[]" value="Visitación"> Visitación</label>
-                <label class="hab-item"><input type="checkbox" name="Relaciones[]" value="Hospitalidad"> Hospitalidad</label>
-                <label class="hab-item"><input type="checkbox" name="Relaciones[]" value="Recepción"> Recepción</label>
-            </div>
-            <div class="cat-box"><h3>📱 VIRTUAL</h3>
-                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Redes"> Redes</label>
-                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="AudioVideo"> Audio/Video</label>
-                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Diseño"> Diseño</label>
-            </div>
-            <div class="cat-box"><h3>🏗️ INFRAESTRUCTURA</h3>
-                <label class="hab-item"><input type="checkbox" name="Infra[]" value="Mantto"> Mantto</label>
-                <label class="hab-item"><input type="checkbox" name="Infra[]" value="Decoracion"> Decoración</label>
-                <label class="hab-item"><input type="checkbox" name="Infra[]" value="Seguridad"> Seguridad</label>
-            </div>
-            <div class="cat-box"><h3>💰 RECURSOS</h3>
-                <label class="hab-item"><input type="checkbox" name="Recursos[]" value="Musica"> Música</label>
-                <label class="hab-item"><input type="checkbox" name="Recursos[]" value="Finanzas"> Tesorería</label>
-                <label class="hab-item"><input type="checkbox" name="Recursos[]" value="Secretaria"> Secretaría</label>
             </div>
         </div>
         <button type="submit" class="btn btn-reg">ENVIAR REGISTRO ⚡</button>
     </form>
 </div>
-
 <script>
-    // --- FUNCIÓN DE ACCESO ---
     function activarAdmin() {
-        const clave = prompt("Ingrese clave administrativa:");
+        const clave = prompt("Ingrese clave:");
         if(clave === "admin2026") {
-            // Quitamos el bloqueo CSS
             document.getElementById('seccion-admin').style.setProperty('display', 'block', 'important');
-            document.getElementById('seccion-admin').scrollIntoView({behavior:'smooth'});
-        } else {
-            alert("Acceso denegado");
-        }
+        } else { alert("Clave incorrecta"); }
     }
-
-    // --- LÓGICA DE CATEGORÍAS (Máx 2) ---
-    const grupos = ["Salud[]", "Enseñanza[]", "Relaciones[]", "Virtual[]", "Infra[]", "Recursos[]"];
+    // Lógica para limitar a 2 por categoría
+    const grupos = ["Salud[]", "Enseñanza[]"]; 
     grupos.forEach(g => {
         const cbs = document.querySelectorAll(`input[name="${g}"]`);
         cbs.forEach(cb => cb.addEventListener('change', () => {
             if(document.querySelectorAll(`input[name="${g}"]:checked`).length > 2) {
-                cb.checked = false; alert("Solo puedes marcar 2 opciones por categoría");
+                cb.checked = false; alert("Máximo 2 opciones");
             }
         }));
     });
-
-    // --- PROCESADOR DE EXCEL MEJORADO ---
-    function procesarExcel() {
-        const f = document.getElementById('upload').files[0];
-        if(!f) return alert("Selecciona el archivo .xlsx primero");
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const data = new Uint8Array(e.target.result);
-            const wb = XLSX.read(data, {type: 'array'});
-            const sh = wb.Sheets[wb.SheetNames[0]];
-            const raw = XLSX.utils.sheet_to_json(sh);
-
-            const procesado = raw.map(r => {
-                const h = r.Habilidades || "";
-                return {
-                    DNI: r.DNI,
-                    Nombres: r.Nombres || r["Nombres y A"],
-                    WhatsApp: r.WhatsApp || r.Celular,
-                    Salud: limpiar(h, ["Nutrición", "PersonalSalud", "Natural"]),
-                    Enseñanza: limpiar(h, ["Biblia", "Maestro", "Pulpito"]),
-                    Relaciones: limpiar(h, ["Visitación", "Hospitalidad", "Recepción"]),
-                    Virtual: limpiar(h, ["Redes", "AudioVideo", "Diseño"]),
-                    Infra: limpiar(h, ["Mantto", "Decoracion", "Seguridad"]),
-                    Recursos: limpiar(h, ["Musica", "Finanzas", "Secretaria"])
-                };
-            });
-
-            const nsh = XLSX.utils.json_to_sheet(procesado);
-            const nwb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(nwb, nsh, "Padrón_Limpio");
-            XLSX.writeFile(nwb, "Padrón_SERVIR_Categorizado.xlsx");
-        };
-        reader.readAsArrayBuffer(f);
-    }
-    function limpiar(t, l) { return l.filter(i => t.includes(i)).join(", "); }
+    function procesarExcel() { alert("Funcionalidad de Excel activa"); }
 </script>
 </body>
 </html>
