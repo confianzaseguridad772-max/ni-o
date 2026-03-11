@@ -3,84 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SERVIR | Talent Intelligence</title>
+    <title>SERVIR | Registro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        :root {
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --neon-blue: #38bdf8; --neon-purple: #c084fc;
-            --bg: #030712; --text: #f3f4f6;
-        }
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: radial-gradient(circle at top right, #1e1b4b, var(--bg)); 
-            color: var(--text); margin: 0; padding: 15px; min-height: 100vh;
-        }
+        /* ESTILO CRÍTICO: OCULTAR PANEL POR DEFECTO */
+        #seccion-admin { display: none !important; } 
+
+        :root { --neon-blue: #38bdf8; --neon-purple: #c084fc; --bg: #030712; --text: #f3f4f6; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: radial-gradient(circle at top right, #1e1b4b, var(--bg)); color: var(--text); margin: 0; padding: 15px; }
         .container { max-width: 900px; margin: auto; }
         header { text-align: center; padding: 30px 10px; }
-        h1 { 
-            font-size: 3rem; font-weight: 800; margin: 0;
-            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .cohete { cursor: pointer; transition: 0.3s; display: inline-block; }
-        .cohete:hover { transform: scale(1.2) rotate(-10deg); filter: drop-shadow(0 0 15px var(--neon-blue)); }
-
-        /* PANEL ADMINISTRATIVO OCULTO */
-        #seccion-admin {
-            display: none; 
-            background: rgba(56, 189, 248, 0.05);
-            border: 2px dashed var(--neon-blue);
-            padding: 25px; border-radius: 25px; margin-bottom: 30px; text-align: center;
-        }
-
-        .form-card { 
-            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border); padding: 30px; border-radius: 30px;
-        }
+        h1 { font-size: 3rem; font-weight: 800; background: linear-gradient(to right, var(--neon-blue), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .cohete { cursor: pointer; transition: 0.3s; }
+        
+        /* DISEÑO DEL PANEL ADMIN */
+        .admin-box { background: rgba(56, 189, 248, 0.1); border: 2px dashed var(--neon-blue); padding: 25px; border-radius: 25px; margin-bottom: 30px; text-align: center; }
+        
+        .form-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 30px; }
         .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .group { display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
-        input[type="text"], input[type="file"] { 
-            background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); 
-            color: white; padding: 14px; border-radius: 15px; outline: none;
-        }
-
-        .grid-cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .cat-box { background: var(--glass); border-radius: 22px; padding: 20px; border: 1px solid var(--glass-border); }
-        .cat-box h3 { margin: 0 0 15px 0; font-size: 1rem; color: var(--neon-blue); border-bottom: 1px solid rgba(56, 189, 248, 0.2); padding-bottom: 5px; }
+        input { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 14px; border-radius: 15px; outline: none; }
         
-        .hab-item { 
-            display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.2);
-            padding: 10px; border-radius: 14px; margin-bottom: 8px; font-size: 0.85rem; cursor: pointer;
-        }
-        .hab-item input { accent-color: var(--neon-blue); }
-
-        .btn-glow { 
-            width: 100%; padding: 20px; border-radius: 20px; border: none; margin-top: 20px;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
-            color: white; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.3s;
-        }
-        .btn-admin { background: #10b981; margin-top: 15px; font-size: 0.9rem; padding: 15px; }
+        .grid-cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .cat-box { background: rgba(255,255,255,0.03); border-radius: 22px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .cat-box h3 { margin: 0 0 15px 0; font-size: 1rem; color: var(--neon-blue); border-bottom: 1px solid rgba(56, 189, 248, 0.2); }
+        .hab-item { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; font-size: 0.85rem; }
+        
+        .btn { width: 100%; padding: 20px; border-radius: 20px; border: none; cursor: pointer; font-weight: 800; transition: 0.3s; }
+        .btn-reg { background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color: white; margin-top: 20px; }
+        .btn-xlsx { background: #10b981; color: white; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>SERVIR <span class="cohete" onclick="abrirAdmin()">🚀</span></h1>
+        <h1>SERVIR <span class="cohete" onclick="activarAdmin()">🚀</span></h1>
         <p style="opacity: 0.7;">Gestionando el talento de la nueva generación</p>
     </header>
 
-    <div id="seccion-admin">
-        <h2 style="color:var(--neon-blue); margin:0 0 15px 0;">🔐 Modo Administrador</h2>
+    <div id="seccion-admin" class="admin-box">
+        <h2 style="color:var(--neon-blue); margin-top:0;">🔐 Panel Administrativo</h2>
         <div class="group" style="max-width:400px; margin:auto;">
-            <label>CARGA TU PADRÓN (.XLSX) 📂</label>
+            <label>Carga tu padrón (.xlsx) 📂</label>
             <input type="file" id="upload" accept=".xlsx">
         </div>
-        <button onclick="procesarYExportar()" class="btn-glow btn-admin">GENERAR REPORTE POR CATEGORÍAS 📊</button>
+        <button onclick="procesarExcel()" class="btn btn-xlsx">GENERAR REPORTE POR CATEGORÍAS 📊</button>
     </div>
 
     <form action="https://formspree.io/f/TU_ID_AQUÍ" method="POST" class="form-card">
@@ -91,7 +61,7 @@
         </div>
 
         <p style="color:var(--neon-purple); font-weight:800; text-align:center; font-size:0.8rem; margin:20px 0;">
-            ELIGE MÁXIMO 2 POR CATEGORÍA
+            SELECCIONA MÁXIMO 2 POR CATEGORÍA
         </p>
 
         <div class="grid-cats">
@@ -101,7 +71,7 @@
                 <label class="hab-item"><input type="checkbox" name="Salud[]" value="Natural"> Medicina Natural</label>
             </div>
             <div class="cat-box"><h3>📖 ENSEÑANZA</h3>
-                <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Biblia"> Instructor Bíblico</label>
+                <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Biblia"> Biblia</label>
                 <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Maestro"> Maestro</label>
                 <label class="hab-item"><input type="checkbox" name="Enseñanza[]" value="Pulpito"> Púlpito</label>
             </div>
@@ -111,12 +81,12 @@
                 <label class="hab-item"><input type="checkbox" name="Relaciones[]" value="Recepción"> Recepción</label>
             </div>
             <div class="cat-box"><h3>📱 VIRTUAL</h3>
-                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Redes"> Redes Sociales</label>
-                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="AudioVideo"> Audio y Video</label>
-                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Diseño"> Diseño Gráfico</label>
+                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Redes"> Redes</label>
+                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="AudioVideo"> Audio/Video</label>
+                <label class="hab-item"><input type="checkbox" name="Virtual[]" value="Diseño"> Diseño</label>
             </div>
             <div class="cat-box"><h3>🏗️ INFRAESTRUCTURA</h3>
-                <label class="hab-item"><input type="checkbox" name="Infra[]" value="Mantto"> Mantenimiento</label>
+                <label class="hab-item"><input type="checkbox" name="Infra[]" value="Mantto"> Mantto</label>
                 <label class="hab-item"><input type="checkbox" name="Infra[]" value="Decoracion"> Decoración</label>
                 <label class="hab-item"><input type="checkbox" name="Infra[]" value="Seguridad"> Seguridad</label>
             </div>
@@ -126,70 +96,68 @@
                 <label class="hab-item"><input type="checkbox" name="Recursos[]" value="Secretaria"> Secretaría</label>
             </div>
         </div>
-        <button type="submit" class="btn-glow">ENVIAR MIS DATOS ⚡</button>
+        <button type="submit" class="btn btn-reg">ENVIAR REGISTRO ⚡</button>
     </form>
 </div>
 
 <script>
-    // --- SEGURIDAD ---
-    function abrirAdmin() {
-        const pass = prompt("Acceso restringido. Ingrese clave:");
-        if(pass === "servir2026") {
-            document.getElementById('seccion-admin').style.display = 'block';
+    // --- FUNCIÓN DE ACCESO ---
+    function activarAdmin() {
+        const clave = prompt("Ingrese clave administrativa:");
+        if(clave === "admin2026") {
+            // Quitamos el bloqueo CSS
+            document.getElementById('seccion-admin').style.setProperty('display', 'block', 'important');
             document.getElementById('seccion-admin').scrollIntoView({behavior:'smooth'});
-        } else { alert("Clave incorrecta"); }
+        } else {
+            alert("Acceso denegado");
+        }
     }
 
-    // --- LIMITAR SELECCIÓN ---
-    const cats = ["Salud[]", "Enseñanza[]", "Relaciones[]", "Virtual[]", "Infra[]", "Recursos[]"];
-    cats.forEach(n => {
-        const cbs = document.querySelectorAll(`input[name="${n}"]`);
+    // --- LÓGICA DE CATEGORÍAS (Máx 2) ---
+    const grupos = ["Salud[]", "Enseñanza[]", "Relaciones[]", "Virtual[]", "Infra[]", "Recursos[]"];
+    grupos.forEach(g => {
+        const cbs = document.querySelectorAll(`input[name="${g}"]`);
         cbs.forEach(cb => cb.addEventListener('change', () => {
-            if(document.querySelectorAll(`input[name="${n}"]:checked`).length > 2) {
-                cb.checked = false; alert("Selecciona máximo 2");
+            if(document.querySelectorAll(`input[name="${g}"]:checked`).length > 2) {
+                cb.checked = false; alert("Solo puedes marcar 2 opciones por categoría");
             }
         }));
     });
 
-    // --- LÓGICA DE EXCEL MEJORADO ---
-    function procesarYExportar() {
-        const file = document.getElementById('upload').files[0];
-        if(!file) return alert("Carga un archivo primero");
-
+    // --- PROCESADOR DE EXCEL MEJORADO ---
+    function procesarExcel() {
+        const f = document.getElementById('upload').files[0];
+        if(!f) return alert("Selecciona el archivo .xlsx primero");
         const reader = new FileReader();
         reader.onload = (e) => {
             const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, {type: 'array'});
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const json = XLSX.utils.sheet_to_json(sheet);
+            const wb = XLSX.read(data, {type: 'array'});
+            const sh = wb.Sheets[wb.SheetNames[0]];
+            const raw = XLSX.utils.sheet_to_json(sh);
 
-            // Separamos la Columna G en columnas nuevas
-            const reporte = json.map(row => {
-                const habs = row.Habilidades || "";
+            const procesado = raw.map(r => {
+                const h = r.Habilidades || "";
                 return {
-                    DNI: row.DNI,
-                    Nombres: row.Nombres || row["Nombres y A"],
-                    Celular: row.Celular || row.WhatsApp,
-                    Salud: extraer(habs, ["Nutrición", "PersonalSalud", "Natural"]),
-                    Enseñanza: extraer(habs, ["Biblia", "Maestro", "Pulpito"]),
-                    Relaciones: extraer(habs, ["Visitación", "Hospitalidad", "Recepción"]),
-                    Virtual: extraer(habs, ["Redes", "AudioVideo", "Diseño"]),
-                    Infra: extraer(habs, ["Mantto", "Decoracion", "Seguridad"]),
-                    Recursos: extraer(habs, ["Musica", "Finanzas", "Secretaria"])
+                    DNI: r.DNI,
+                    Nombres: r.Nombres || r["Nombres y A"],
+                    WhatsApp: r.WhatsApp || r.Celular,
+                    Salud: limpiar(h, ["Nutrición", "PersonalSalud", "Natural"]),
+                    Enseñanza: limpiar(h, ["Biblia", "Maestro", "Pulpito"]),
+                    Relaciones: limpiar(h, ["Visitación", "Hospitalidad", "Recepción"]),
+                    Virtual: limpiar(h, ["Redes", "AudioVideo", "Diseño"]),
+                    Infra: limpiar(h, ["Mantto", "Decoracion", "Seguridad"]),
+                    Recursos: limpiar(h, ["Musica", "Finanzas", "Secretaria"])
                 };
             });
 
-            const newSheet = XLSX.utils.json_to_sheet(reporte);
-            const newWB = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(newWB, newSheet, "Padrón Limpio");
-            XLSX.writeFile(newWB, "Reporte_SERVIR_Categorizado.xlsx");
+            const nsh = XLSX.utils.json_to_sheet(procesado);
+            const nwb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(nwb, nsh, "Padrón_Limpio");
+            XLSX.writeFile(nwb, "Padrón_SERVIR_Categorizado.xlsx");
         };
-        reader.readAsArrayBuffer(file);
+        reader.readAsArrayBuffer(f);
     }
-
-    function extraer(texto, lista) {
-        return lista.filter(h => texto.includes(h)).join(", ");
-    }
+    function limpiar(t, l) { return l.filter(i => t.includes(i)).join(", "); }
 </script>
 </body>
 </html>
