@@ -13,7 +13,6 @@
             --glass: rgba(255, 255, 255, 0.9);
         }
 
-        /* Fondo con Imágenes Cambiantes */
         body { 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             margin: 0;
@@ -48,7 +47,6 @@
             animation: imageAnimation 36s linear infinite; 
         }
 
-        /* 3 Imágenes representativas (puedes añadir más siguiendo el patrón) */
         .slideshow li:nth-child(1) { background-image: url('https://images.unsplash.com/photo-1584820923423-8f2df4777b71?auto=format&fit=crop&q=80&w=1600'); }
         .slideshow li:nth-child(2) { background-image: url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&q=80&w=1600'); animation-delay: 12s; }
         .slideshow li:nth-child(3) { background-image: url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&q=80&w=1600'); animation-delay: 24s; }
@@ -61,7 +59,6 @@
             100% { opacity: 0; }
         }
 
-        /* Contenedor Efecto Cristal */
         .card { 
             max-width: 500px; 
             width: 90%; 
@@ -110,12 +107,6 @@
             transition: 0.3s;
         }
 
-        .filtros input:focus, .filtros select:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 8px rgba(0,168,132,0.2);
-        }
-
         .btn-main { 
             background: linear-gradient(135deg, var(--dark), var(--accent));
             color: white; 
@@ -128,10 +119,7 @@
             margin-top: 20px; 
             transition: 0.3s;
             text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(7, 94, 84, 0.3);
         }
-
-        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(7, 94, 84, 0.4); }
 
         .btn-next { 
             background: #ff9800; 
@@ -149,11 +137,7 @@
             animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
         .tarjeta { 
             border: 1px solid rgba(0,0,0,0.05); 
@@ -166,8 +150,6 @@
             background: white; 
             transition: 0.3s;
         }
-
-        .tarjeta:hover { transform: translateX(5px); box-shadow: 5px 5px 15px rgba(0,0,0,0.05); }
 
         .info b { display: block; text-transform: uppercase; font-size: 14px; color: var(--dark); }
         .info span { font-size: 12px; color: #777; display: block; margin-top: 2px; }
@@ -191,13 +173,9 @@
             border-radius: 30px; 
             font-size: 12px; 
             font-weight: bold; 
-            box-shadow: 0 3px 10px rgba(37, 211, 102, 0.3);
         }
 
-        /* Scrollbar estética */
         #lista { max-height: 400px; overflow-y: auto; padding-right: 5px; }
-        #lista::-webkit-scrollbar { width: 5px; }
-        #lista::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -223,6 +201,11 @@
             <option value="Tarde">TARDE</option>
         </select>
 
+        <label>Establecimiento (EESS):</label>
+        <select id="filtroEESS">
+            <option value="TODOS">-- TODOS LOS EESS --</option>
+            </select>
+
         <button class="btn-main" onclick="cargarExcel()">Mostrar Listado</button>
     </div>
     
@@ -232,15 +215,33 @@
 </div>
 
 <script>
-    // TU PROGRAMACIÓN INTACTA
     const URL_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-kCdER9NTPl29MALvc5Bam5N-UniBAH-OqP5GusOdT9wbJyQ5XQs-Qt66L6ds9ZxW1sUtZ9L7z4pW/pub?gid=0&single=true&output=csv';
     let pacientesGlobal = [];
     let indiceActual = 0;
+
+    // Cargar los EESS al iniciar la página para llenar el filtro
+    window.onload = function() {
+        Papa.parse(URL_CSV, {
+            download: true,
+            header: true,
+            complete: function(res) {
+                const selectEESS = document.getElementById('filtroEESS');
+                const eessUnicos = [...new Set(res.data.map(p => p.EESS).filter(Boolean))];
+                eessUnicos.forEach(eess => {
+                    let opt = document.createElement('option');
+                    opt.value = eess;
+                    opt.innerHTML = eess;
+                    selectEESS.appendChild(opt);
+                });
+            }
+        });
+    };
 
     function cargarExcel() {
         const fInicio = document.getElementById('fechaInicio').value;
         const fFin = document.getElementById('fechaFin').value;
         const turnoSeleccionado = document.getElementById('filtroTurno').value;
+        const eessSeleccionado = document.getElementById('filtroEESS').value;
 
         if (!fInicio || !fFin) {
             alert("Por favor, selecciona un rango de fechas.");
@@ -254,14 +255,17 @@
             complete: function(res) {
                 pacientesGlobal = res.data.filter(p => {
                     if (!p['FECHA DE CITA'] || !p.CELULAR || !p.TURNO) return false;
+                    
                     const partes = p['FECHA DE CITA'].split('/');
                     const fechaPaciente = new Date(partes[2], partes[1] - 1, partes[0]);
                     const dInicio = new Date(fInicio + "T00:00:00");
                     const dFin = new Date(fFin + "T23:59:59");
+                    
                     const cumpleFecha = fechaPaciente >= dInicio && fechaPaciente <= dFin;
-                    const cumpleTurno = (turnoSeleccionado === "TODOS") || 
-                                        (p.TURNO.trim().toLowerCase() === turnoSeleccionado.toLowerCase());
-                    return cumpleFecha && cumpleTurno;
+                    const cumpleTurno = (turnoSeleccionado === "TODOS") || (p.TURNO.trim() === turnoSeleccionado);
+                    const cumpleEESS = (eessSeleccionado === "TODOS") || (p.EESS === eessSeleccionado);
+
+                    return cumpleFecha && cumpleTurno && cumpleEESS;
                 });
                 indiceActual = 0;
                 mostrarLista();
@@ -272,7 +276,7 @@
 
     function mostrarLista() {
         const div = document.getElementById('lista');
-        div.innerHTML = `<p style="text-align:center; color:#666; font-size: 13px; margin-bottom: 15px;">Pacientes encontrados: <b>${pacientesGlobal.length}</b></p>`;
+        div.innerHTML = `<p style="text-align:center; color:#666; font-size: 13px; margin-bottom: 15px;">Pacientes: <b>${pacientesGlobal.length}</b></p>`;
         const hoy = new Date();
         const hoyStr = `${hoy.getDate().toString().padStart(2, '0')}/${(hoy.getMonth() + 1).toString().padStart(2, '0')}/${hoy.getFullYear()}`;
 
@@ -285,7 +289,7 @@
                 <div class="info">
                     <b>${p.NOMBRE}</b>
                     <span>📅 ${p['FECHA DE CITA']} | ⏰ ${p.TURNO}</span>
-                    <span style="font-size:10px; color:var(--dark); font-weight:bold;">📍 ${p.CONSULTORIO}</span>
+                    <span style="font-size:10px; color:var(--dark); font-weight:bold;">📍 ${p.EESS} - ${p.CONSULTORIO}</span>
                     ${esHoy ? '<span class="hoy-badge">CITA PARA HOY</span>' : ''}
                 </div>
                 <a href="#" class="btn-send" onclick="enviarIndividual(${i})">ENVIAR</a>
@@ -311,7 +315,10 @@
         const hoyStr = `${hoy.getDate().toString().padStart(2, '0')}/${(hoy.getMonth() + 1).toString().padStart(2, '0')}/${hoy.getFullYear()}`;
         const esHoy = (p['FECHA DE CITA'].trim() === hoyStr);
         const fechaTxt = esHoy ? "*HOY*" : `el *${p['FECHA DE CITA']}*`;
-        const msg = `Hola, le saludamos de su centro de salud. *${p.NOMBRE}*, se le recuerda que la cita de su control de su bebe es ${fechaTxt} en el turno *${p.TURNO}* en el *${p.CONSULTORIO}*. Por favor, no falte.`;
+        
+        // Mensaje personalizado con el EESS
+        const msg = `Hola, le saludamos de su centro de salud *${p.EESS}*. *${p.NOMBRE}*, se le recuerda que la cita de su control de su bebe es ${fechaTxt} en el turno *${p.TURNO}* en el *${p.CONSULTORIO}*. Por favor, no falte.`;
+        
         return `https://api.whatsapp.com/send?phone=51${p.CELULAR.trim()}&text=${encodeURIComponent(msg)}`;
     }
 
@@ -338,6 +345,5 @@
         }
     }
 </script>
-
 </body>
 </html>
