@@ -3,87 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Controles - CRED</title>
+    <title>Sistema de Citas CRED</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
-        :root { --primario: #075E54; --whatsapp: #25D366; --gris: #f4f7f6; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--gris); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .contenedor { max-width: 600px; width: 100%; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-        h2 { color: var(--primario); text-align: center; margin-bottom: 25px; border-bottom: 2px solid var(--whatsapp); padding-bottom: 10px; }
-        .btn-cargar { background-color: var(--primario); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 20px; }
-        .btn-cargar:hover { background-color: #05443c; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        .tarjeta { border: 1px solid #eee; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; background: #fff; margin-bottom: 10px; transition: 0.2s; }
-        .tarjeta:hover { border-color: var(--whatsapp); }
-        .paciente-info b { display: block; text-transform: uppercase; font-size: 14px; color: #333; }
-        .paciente-info span { font-size: 13px; color: #666; display: block; margin-top: 4px; }
-        .btn-enviar { background-color: var(--whatsapp); color: white; border: none; padding: 10px 15px; border-radius: 20px; text-decoration: none; font-size: 12px; font-weight: bold; text-align: center; }
-        .btn-enviar:hover { transform: scale(1.05); }
-        .footer-info { text-align: center; font-size: 12px; color: #999; margin-top: 20px; }
+        :root { --verde-fuerte: #075E54; --verde-wa: #25D366; --fondo: #f0f2f5; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--fondo); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { max-width: 550px; width: 100%; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h2 { color: var(--verde-fuerte); text-align: center; margin-bottom: 25px; border-bottom: 2px solid var(--verde-wa); padding-bottom: 10px; }
+        .btn-sync { background-color: var(--verde-fuerte); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 20px; }
+        .btn-sync:hover { background-color: #05443c; }
+        .lista { display: grid; gap: 15px; }
+        .tarjeta { background: #fff; border: 1px solid #e0e0e0; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .info b { display: block; text-transform: uppercase; color: #333; font-size: 14px; }
+        .info span { font-size: 13px; color: #666; display: block; margin-top: 3px; }
+        .btn-wa { background-color: var(--verde-wa); color: white; border: none; padding: 10px 18px; border-radius: 25px; text-decoration: none; font-size: 13px; font-weight: bold; transition: 0.2s; }
+        .btn-wa:hover { transform: scale(1.05); background-color: #1ebe57; }
+        .vacio { text-align: center; color: #999; font-style: italic; padding: 20px; }
     </style>
 </head>
 <body>
 
-<div class="contenedor">
-    <h2>Recordatorio de Control CRED</h2>
-    
-    <button class="btn-cargar" onclick="sincronizarExcel()">CARGAR PACIENTES DEL EXCEL</button>
-
-    <div id="lista-pacientes">
-        <p style="text-align: center; color: #999;">Haz clic arriba para ver la lista de pacientes.</p>
+<div class="container">
+    <h2>Recordatorio de Citas CRED</h2>
+    <button class="btn-sync" onclick="cargarDatos()">CARGAR LISTA DE PACIENTES</button>
+    <div id="lista-pacientes" class="lista">
+        <p class="vacio">Presiona el botón para sincronizar con el Excel.</p>
     </div>
-
-    <div class="footer-info">Conectado a Google Sheets en tiempo real</div>
 </div>
 
 <script>
-    // --- IMPORTANTE: PEGA AQUÍ TU ENLACE CSV ---
-    const MI_URL_EXCEL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-kCdER9NTPl29MALvc5Bam5N-UniBAH-OqP5GusOdT9wbJyQ5XQs-Qt66L6ds9ZxW1sUtZ9L7z4pW/pub?gid=0&single=true&output=csv';
+    // --- PEGA AQUÍ TU ENLACE QUE TERMINA EN output=csv ---
+    const URL_EXCEL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-kCdER9NTPl29MALvc5Bam5N-UniBAH-OqP5GusOdT9wbJyQ5XQs-Qt66L6ds9ZxW1sUtZ9L7z4pW/pub?gid=0&single=true&output=csv';
 
-    function sincronizarExcel() {
-        const divLista = document.getElementById('lista-pacientes');
-        divLista.innerHTML = '<p style="text-align: center;">Accediendo a la base de datos de Google...</p>';
+    function cargarDatos() {
+        const contenedor = document.getElementById('lista-pacientes');
+        contenedor.innerHTML = '<p class="vacio">Sincronizando con Google Sheets...</p>';
 
-        Papa.parse(MI_URL_EXCEL, {
+        Papa.parse(URL_EXCEL, {
             download: true,
             header: true,
             skipEmptyLines: true,
-            complete: function(docs) {
-                mostrarEnPantalla(docs.data);
+            complete: function(resultado) {
+                mostrarPacientes(resultado.data);
             },
             error: function() {
-                divLista.innerHTML = '<p style="text-align: center; color: red;">Error: Revisa que el Excel esté "Publicado en la web" como CSV.</p>';
+                contenedor.innerHTML = '<p class="vacio" style="color:red;">Error de conexión. Verifica que el Excel esté publicado como CSV.</p>';
             }
         });
     }
 
-    function mostrarEnPantalla(pacientes) {
-        const divLista = document.getElementById('lista-pacientes');
-        divLista.innerHTML = '';
+    function mostrarPacientes(datos) {
+        const contenedor = document.getElementById('lista-pacientes');
+        contenedor.innerHTML = '';
 
-        pacientes.forEach(p => {
-            // Extraemos datos según tus columnas exactas
-            const nombre = p['NOMBRE'] ? p['NOMBRE'].trim() : 'Sin Nombre';
+        if (datos.length === 0) {
+            contenedor.innerHTML = '<p class="vacio">No hay datos en el Excel.</p>';
+            return;
+        }
+
+        datos.forEach(p => {
+            // Usamos los nombres exactos de tus columnas
+            const nombre = p['NOMBRE'] ? p['NOMBRE'].trim() : 'PACIENTE';
             const celular = p['CELULAR'] ? p['CELULAR'].trim() : '';
             const fechaCita = p['FECHA DE CITA'] ? p['FECHA DE CITA'].trim() : '---';
+
+            if (celular === "") return; // Ignorar filas sin teléfono
 
             const item = document.createElement('div');
             item.className = 'tarjeta';
             
             // EL MENSAJE QUE SOLICITASTE
-            const texto = `Hola, le saludamos de su centro de salud. *${nombre}*, se le recuerda que la cita de su control de su bebe será el *${fechaCita}*. Por favor, no falte.`;
+            const saludo = "Hola, le saludamos de su centro de salud.";
+            const mensaje = `${saludo} *${nombre}*, se le recuerda que la cita de su control de su bebe será el *${fechaCita}*. Por favor, no falte.`;
             
             // Link de WhatsApp (Prefijo 51 para Perú)
-            const waLink = `https://api.whatsapp.com/send?phone=51${celular}&text=${encodeURIComponent(texto)}`;
+            const linkWA = `https://api.whatsapp.com/send?phone=51${celular}&text=${encodeURIComponent(mensaje)}`;
 
             item.innerHTML = `
-                <div class="paciente-info">
+                <div class="info">
                     <b>${nombre}</b>
                     <span>📅 Cita: ${fechaCita}</span>
                     <span>📱 Cel: ${celular}</span>
                 </div>
-                <a href="${waLink}" target="_blank" class="btn-enviar">ENVIAR RECORDATORIO</a>
+                <a href="${linkWA}" target="_blank" class="btn-wa">ENVIAR WA</a>
             `;
-            divLista.appendChild(item);
+            contenedor.appendChild(item);
         });
     }
 </script>
