@@ -3,46 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Envío Masivo CRED - Detallado</title>
+    <title>Gestión Avanzada CRED</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         :root { --dark: #075E54; --wa: #25D366; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; display: flex; justify-content: center; }
-        .card { max-width: 550px; width: 100%; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .card { max-width: 600px; width: 100%; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         h2 { color: var(--dark); text-align: center; margin-bottom: 20px; }
-        .btn-main { background: var(--dark); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 15px; }
+        .filtros { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #ddd; }
+        .filtros label { font-size: 12px; font-weight: bold; color: #555; }
+        .filtros input { padding: 8px; margin: 5px 0 15px 0; width: 90%; border-radius: 5px; border: 1px solid #ccc; }
+        .btn-main { background: var(--dark); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
         .btn-next { background: #ff9800; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 20px; display: none; text-align: center; text-decoration: none; }
         .tarjeta { border: 1px solid #eee; padding: 12px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; background: #fff; }
         .info b { display: block; text-transform: uppercase; font-size: 13px; color: #333; }
         .info span { font-size: 11px; color: #666; display: block; }
-        .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-top: 4px; }
+        .hoy-badge { background: #d32f2f; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-top: 4px; display: inline-block; }
         .btn-send { background: var(--wa); color: white; text-decoration: none; padding: 8px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        .status-sent { opacity: 0.5; background: #ccc !important; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Control CRED - Centro de Salud</h2>
-    <button class="btn-main" onclick="cargarExcel()">1. CARGAR LISTA ACTUALIZADA</button>
+    <h2>Control CRED - Sistema Inteligente</h2>
     
-    <a id="btnSiguiente" href="#" target="_blank" class="btn-next" onclick="marcarSiguiente()">2. ENVIAR AL SIGUIENTE PACIENTE</a>
+    <div class="filtros">
+        <label>DESDE:</label>
+        <input type="date" id="fechaInicio">
+        <label>HASTA:</label>
+        <input type="date" id="fechaFin">
+        <button class="btn-main" onclick="cargarExcel()">FILTRAR Y CARGAR LISTA</button>
+    </div>
+    
+    <a id="btnSiguiente" href="#" target="_blank" class="btn-next" onclick="marcarSiguiente()">ENVIAR AL SIGUIENTE PACIENTE</a>
 
     <div id="lista"></div>
 </div>
 
 <script>
-    const URL_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-kCdER9NTPl29MALvc5Bam5N-UniBAH-OqP5GusOdT9wbJyQ5XQs-Qt66L6ds9ZxW1sUtZ9L7z4pW/pub?gid=0&single=true&output=csv'; 
+    const URL_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-kCdER9NTPl29MALvc5Bam5N-UniBAH-OqP5GusOdT9wbJyQ5XQs-Qt66L6ds9ZxW1sUtZ9L7z4pW/pub?gid=0&single=true&output=csv'; // <--- PEGA TU LINK AQUÍ
     let pacientesGlobal = [];
     let indiceActual = 0;
 
     function cargarExcel() {
+        const fInicio = document.getElementById('fechaInicio').value;
+        const fFin = document.getElementById('fechaFin').value;
+
+        if (!fInicio || !fFin) {
+            alert("Por favor, selecciona un rango de fechas.");
+            return;
+        }
+
         Papa.parse(URL_CSV, {
             download: true,
             header: true,
             skipEmptyLines: true,
             complete: function(res) {
-                pacientesGlobal = res.data.filter(p => p.NOMBRE && p.CELULAR);
+                // Filtrar por rango de fecha
+                pacientesGlobal = res.data.filter(p => {
+                    if (!p['FECHA DE CITA'] || !p.CELULAR) return false;
+                    
+                    // Convertir fecha de Excel (DD/MM/YYYY) a objeto Date de JS
+                    const partes = p['FECHA DE CITA'].split('/');
+                    const fechaPaciente = new Date(partes[2], partes[1] - 1, partes[0]);
+                    
+                    const dInicio = new Date(fInicio + "T00:00:00");
+                    const dFin = new Date(fFin + "T23:59:59");
+
+                    return fechaPaciente >= dInicio && fechaPaciente <= dFin;
+                });
+
+                indiceActual = 0;
                 mostrarLista();
                 prepararSiguiente();
             }
@@ -51,13 +82,16 @@
 
     function mostrarLista() {
         const div = document.getElementById('lista');
-        div.innerHTML = `<p style="text-align:center">Pacientes en lista: ${pacientesGlobal.length}</p>`;
+        div.innerHTML = `<p style="text-align:center">Resultados: ${pacientesGlobal.length} pacientes</p>`;
         
+        const hoy = new Date();
+        const hoyStr = `${hoy.getDate().toString().padStart(2, '0')}/${(hoy.getMonth() + 1).toString().padStart(2, '0')}/${hoy.getFullYear()}`;
+
         pacientesGlobal.forEach((p, i) => {
-            const turno = p['TURNO'] || 'No especificado';
-            const consultorio = p['CONSULTORIO'] || 'No especificado';
+            const esHoy = (p['FECHA DE CITA'].trim() === hoyStr);
+            const fechaTxt = esHoy ? "*HOY*" : `el *${p['FECHA DE CITA']}*`;
             
-            const msg = `Hola, le saludamos de su centro de salud. *${p.NOMBRE}*, se le recuerda que la cita de su control de su bebe será el *${p['FECHA DE CITA']}* en el turno *${turno}* en el *${consultorio}*. Por favor, no falte.`;
+            const msg = `Hola, le saludamos de su centro de salud. *${p.NOMBRE}*, se le recuerda que la cita de su control de su bebe es ${fechaTxt} en el turno *${p.TURNO}* en el *${p.CONSULTORIO}*. Por favor, no falte.`;
             const link = `https://api.whatsapp.com/send?phone=51${p.CELULAR.trim()}&text=${encodeURIComponent(msg)}`;
             
             const item = document.createElement('div');
@@ -66,8 +100,8 @@
             item.innerHTML = `
                 <div class="info">
                     <b>${p.NOMBRE}</b>
-                    <span>📅 ${p['FECHA DE CITA']} | ⏰ ${turno}</span>
-                    <span class="badge">📍 ${consultorio}</span>
+                    <span>📅 ${p['FECHA DE CITA']} | ${p.TURNO}</span>
+                    ${esHoy ? '<span class="hoy-badge">CITA PARA HOY</span>' : ''}
                 </div>
                 <a href="${link}" target="_blank" class="btn-send" onclick="marcarComoEnviado(${i})">ENVIAR</a>
             `;
@@ -78,19 +112,21 @@
     function prepararSiguiente() {
         if (indiceActual < pacientesGlobal.length) {
             const p = pacientesGlobal[indiceActual];
-            const turno = p['TURNO'] || 'No especificado';
-            const consultorio = p['CONSULTORIO'] || 'No especificado';
+            const hoy = new Date();
+            const hoyStr = `${hoy.getDate().toString().padStart(2, '0')}/${(hoy.getMonth() + 1).toString().padStart(2, '0')}/${hoy.getFullYear()}`;
             
-            const msg = `Hola, le saludamos de su centro de salud. *${p.NOMBRE}*, se le recuerda que la cita de su control de su bebe será el *${p['FECHA DE CITA']}* en el turno *${turno}* en el *${consultorio}*. Por favor, no falte.`;
+            const esHoy = (p['FECHA DE CITA'].trim() === hoyStr);
+            const fechaTxt = esHoy ? "*HOY*" : `el *${p['FECHA DE CITA']}*`;
+            
+            const msg = `Hola, le saludamos de su centro de salud. *${p.NOMBRE}*, se le recuerda que la cita de su control de su bebe es ${fechaTxt} en el turno *${p.TURNO}* en el *${p.CONSULTORIO}*. Por favor, no falte.`;
             const link = `https://api.whatsapp.com/send?phone=51${p.CELULAR.trim()}&text=${encodeURIComponent(msg)}`;
             
             const btn = document.getElementById('btnSiguiente');
             btn.href = link;
             btn.style.display = 'block';
-            btn.innerText = `ENVIAR A: ${p.NOMBRE} (${turno})`;
+            btn.innerText = `ENVIAR A: ${p.NOMBRE} (${esHoy ? 'HOY' : p['FECHA DE CITA']})`;
         } else {
             document.getElementById('btnSiguiente').style.display = 'none';
-            alert("¡Lista completada!");
         }
     }
 
@@ -104,9 +140,7 @@
         const tarjeta = document.getElementById(`paciente-${i}`);
         if(tarjeta) {
             tarjeta.style.background = "#e8f5e9";
-            const btn = tarjeta.querySelector('.btn-send');
-            btn.classList.add('status-sent');
-            btn.innerText = "ENVIADO";
+            tarjeta.querySelector('.btn-send').innerText = "ENVIADO";
         }
     }
 </script>
