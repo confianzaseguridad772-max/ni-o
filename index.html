@@ -73,7 +73,7 @@
     function prepararSiguiente() {
         if (indiceActual < pacientesGlobal.length) {
             const p = pacientesGlobal[indiceActual];
-            const msg = `Hola, le saludamos de su centro de salud. *${p.NOMBRE}*, se le recuerda que la cita de su control de su bebe será el *${p['FECHA DE CITA']}*. Por favor, no falte.`;
+            const msg = `Hola, le saludamos de su centro de salud. *${p.NOMBRE}*, se le recuerda que la cita de su control de su bebe será el *${p['FECHA DE CITA']}*. No falte.`;
             const link = `https://api.whatsapp.com/send?phone=51${p.CELULAR.trim()}&text=${encodeURIComponent(msg)}`;
             
             const btn = document.getElementById('btnSiguiente');
