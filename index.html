@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Envío Masivo CRED</title>
+    <title>Envío Masivo CRED - Detallado</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         :root { --dark: #075E54; --wa: #25D366; }
@@ -13,8 +13,9 @@
         .btn-main { background: var(--dark); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 15px; }
         .btn-next { background: #ff9800; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 20px; display: none; text-align: center; text-decoration: none; }
         .tarjeta { border: 1px solid #eee; padding: 12px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; background: #fff; }
-        .info b { display: block; text-transform: uppercase; font-size: 13px; }
-        .info span { font-size: 12px; color: #666; }
+        .info b { display: block; text-transform: uppercase; font-size: 13px; color: #333; }
+        .info span { font-size: 11px; color: #666; display: block; }
+        .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-top: 4px; }
         .btn-send { background: var(--wa); color: white; text-decoration: none; padding: 8px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
         .status-sent { opacity: 0.5; background: #ccc !important; }
     </style>
@@ -22,8 +23,8 @@
 <body>
 
 <div class="card">
-    <h2>Control de Salud CRED</h2>
-    <button class="btn-main" onclick="cargarExcel()">1. CARGAR LISTA COMPLETA</button>
+    <h2>Control CRED - Centro de Salud</h2>
+    <button class="btn-main" onclick="cargarExcel()">1. CARGAR LISTA ACTUALIZADA</button>
     
     <a id="btnSiguiente" href="#" target="_blank" class="btn-next" onclick="marcarSiguiente()">2. ENVIAR AL SIGUIENTE PACIENTE</a>
 
@@ -31,7 +32,7 @@
 </div>
 
 <script>
-    const URL_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-kCdER9NTPl29MALvc5Bam5N-UniBAH-OqP5GusOdT9wbJyQ5XQs-Qt66L6ds9ZxW1sUtZ9L7z4pW/pub?gid=0&single=true&output=csv'; // <--- PEGA TU LINK AQUÍ
+    const URL_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-kCdER9NTPl29MALvc5Bam5N-UniBAH-OqP5GusOdT9wbJyQ5XQs-Qt66L6ds9ZxW1sUtZ9L7z4pW/pub?gid=0&single=true&output=csv'; 
     let pacientesGlobal = [];
     let indiceActual = 0;
 
@@ -50,10 +51,13 @@
 
     function mostrarLista() {
         const div = document.getElementById('lista');
-        div.innerHTML = `<p style="text-align:center">Total: ${pacientesGlobal.length} pacientes encontrados</p>`;
+        div.innerHTML = `<p style="text-align:center">Pacientes en lista: ${pacientesGlobal.length}</p>`;
         
         pacientesGlobal.forEach((p, i) => {
-            const msg = `Hola, le saludamos de su centro de salud. *${p.NOMBRE}*, se le recuerda que la cita de su control de su bebe será el *${p['FECHA DE CITA']}*. Por favor, no falte.`;
+            const turno = p['TURNO'] || 'No especificado';
+            const consultorio = p['CONSULTORIO'] || 'No especificado';
+            
+            const msg = `Hola, le saludamos de su centro de salud. *${p.NOMBRE}*, se le recuerda que la cita de su control de su bebe será el *${p['FECHA DE CITA']}* en el turno *${turno}* en el *${consultorio}*. Por favor, no falte.`;
             const link = `https://api.whatsapp.com/send?phone=51${p.CELULAR.trim()}&text=${encodeURIComponent(msg)}`;
             
             const item = document.createElement('div');
@@ -62,7 +66,8 @@
             item.innerHTML = `
                 <div class="info">
                     <b>${p.NOMBRE}</b>
-                    <span>Cita: ${p['FECHA DE CITA']}</span>
+                    <span>📅 ${p['FECHA DE CITA']} | ⏰ ${turno}</span>
+                    <span class="badge">📍 ${consultorio}</span>
                 </div>
                 <a href="${link}" target="_blank" class="btn-send" onclick="marcarComoEnviado(${i})">ENVIAR</a>
             `;
@@ -73,23 +78,25 @@
     function prepararSiguiente() {
         if (indiceActual < pacientesGlobal.length) {
             const p = pacientesGlobal[indiceActual];
-            const msg = `Hola, le saludamos de su centro de salud. *${p.NOMBRE}*, se le recuerda que la cita de su control de su bebe será el *${p['FECHA DE CITA']}*. No falte.`;
+            const turno = p['TURNO'] || 'No especificado';
+            const consultorio = p['CONSULTORIO'] || 'No especificado';
+            
+            const msg = `Hola, le saludamos de su centro de salud. *${p.NOMBRE}*, se le recuerda que la cita de su control de su bebe será el *${p['FECHA DE CITA']}* en el turno *${turno}* en el *${consultorio}*. Por favor, no falte.`;
             const link = `https://api.whatsapp.com/send?phone=51${p.CELULAR.trim()}&text=${encodeURIComponent(msg)}`;
             
             const btn = document.getElementById('btnSiguiente');
             btn.href = link;
             btn.style.display = 'block';
-            btn.innerText = `ENVIAR A: ${p.NOMBRE}`;
+            btn.innerText = `ENVIAR A: ${p.NOMBRE} (${turno})`;
         } else {
             document.getElementById('btnSiguiente').style.display = 'none';
-            alert("¡Terminaste con toda la lista!");
+            alert("¡Lista completada!");
         }
     }
 
     function marcarSiguiente() {
         marcarComoEnviado(indiceActual);
         indiceActual++;
-        // Esperamos un segundo antes de preparar el siguiente para que cargue el link
         setTimeout(prepararSiguiente, 1000);
     }
 
@@ -97,8 +104,9 @@
         const tarjeta = document.getElementById(`paciente-${i}`);
         if(tarjeta) {
             tarjeta.style.background = "#e8f5e9";
-            tarjeta.querySelector('.btn-send').classList.add('status-sent');
-            tarjeta.querySelector('.btn-send').innerText = "ENVIADO";
+            const btn = tarjeta.querySelector('.btn-send');
+            btn.classList.add('status-sent');
+            btn.innerText = "ENVIADO";
         }
     }
 </script>
