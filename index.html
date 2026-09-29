@@ -1,431 +1,291 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CITAS CRED - Gestión Profesional</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <style>
-        :root { 
-            --dark: #075E54; 
-            --wa: #25D366; 
-            --accent: #00a884;
-            --glass: rgba(255, 255, 255, 0.9);
-            --error: #ef5350;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Captura & Subida Futura ELOHIM</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-        body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            margin: 0;
-            min-height: 100vh;
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            overflow-x: hidden;
-            background-color: #333;
-        }
+  <style>
+    :root {
+      --primary: #38bdf8;
+      --accent: #a855f7;
+      --bg-dark: #070913;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: rgba(255, 255, 255, 0.15);
+      --text: #f8fafc;
+    }
 
-        .slideshow {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0; left: 0;
-            z-index: -1;
-            list-style: none;
-            margin: 0; padding: 0;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-        .slideshow li { 
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0; left: 0;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0;
-            z-index: 0;
-            animation: imageAnimation 36s linear infinite; 
-        }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem;
+    }
 
-        .slideshow li:nth-child(1) { background-image: url('https://images.unsplash.com/photo-1584820923423-8f2df4777b71?auto=format&fit=crop&q=80&w=1600'); }
-        .slideshow li:nth-child(2) { background-image: url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&q=80&w=1600'); animation-delay: 12s; }
-        .slideshow li:nth-child(3) { background-image: url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&q=80&w=1600'); animation-delay: 24s; }
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      backdrop-filter: blur(25px);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 1.8rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    }
 
-        @keyframes imageAnimation { 
-            0% { opacity: 0; animation-timing-function: ease-in; }
-            8% { opacity: 1; animation-timing-function: ease-out; }
-            33% { opacity: 1; }
-            41% { opacity: 0; }
-            100% { opacity: 0; }
-        }
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-align: center;
+      background: linear-gradient(135deg, #38bdf8, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.5rem;
+    }
 
-        .card { 
-            max-width: 500px; 
-            width: 90%; 
-            background: var(--glass); 
-            backdrop-filter: blur(10px);
-            padding: 30px; 
-            border-radius: 25px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
-            margin: 20px;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
 
-        h2 { 
-            color: var(--dark); 
-            text-align: center; 
-            margin-bottom: 25px; 
-            letter-spacing: 1px;
-            font-weight: 800;
-        }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-        .filtros { 
-            background: rgba(255,255,255,0.5); 
-            padding: 20px; 
-            border-radius: 18px; 
-            margin-bottom: 20px; 
-            border: 1px solid rgba(0,0,0,0.05); 
-        }
+    input[type="text"], select {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
 
-        .filtros label { 
-            font-size: 11px; 
-            font-weight: 700; 
-            color: #444; 
-            display: block; 
-            margin-top: 10px; 
-            text-transform: uppercase;
-        }
+    input[type="text"]:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+    }
 
-        .filtros input, .filtros select, .extra-msg { 
-            padding: 12px; 
-            margin-top: 5px; 
-            width: 100%; 
-            border-radius: 10px; 
-            border: 1px solid #ddd; 
-            box-sizing: border-box; 
-            font-size: 14px;
-            transition: 0.3s;
-        }
+    .camera-trigger {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed rgba(56, 189, 248, 0.4);
+      background: rgba(56, 189, 248, 0.05);
+      border-radius: 20px;
+      padding: 2rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 1.2rem;
+    }
 
-        .extra-msg {
-            resize: none;
-            font-family: inherit;
-            background: white;
-        }
+    .camera-trigger:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: var(--primary);
+    }
 
-        .btn-main { 
-            background: linear-gradient(135deg, var(--dark), var(--accent));
-            color: white; 
-            border: none; 
-            padding: 16px; 
-            width: 100%; 
-            border-radius: 12px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            margin-top: 20px; 
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
+    .camera-trigger i {
+      width: 42px;
+      height: 42px;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
 
-        .btn-next { 
-            background: #ff9800; 
-            color: white; 
-            border: none; 
-            padding: 18px; 
-            width: 100%; 
-            border-radius: 12px; 
-            font-weight: 900; 
-            cursor: pointer; 
-            margin-bottom: 25px; 
-            display: none; 
-            text-align: center; 
-            text-decoration: none; 
-            animation: pulse 2s infinite;
-        }
+    .preview-container {
+      width: 100%;
+      height: 220px;
+      border-radius: 18px;
+      overflow: hidden;
+      display: none;
+      margin-bottom: 1.2rem;
+      border: 1px solid var(--card-border);
+      position: relative;
+    }
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+    .preview-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-        .tarjeta { 
-            border: 1px solid rgba(0,0,0,0.05); 
-            padding: 15px; 
-            margin-bottom: 12px; 
-            border-radius: 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: white; 
-            transition: 0.3s;
-        }
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #030712;
+      font-weight: 800;
+      font-size: 1rem;
+      border: none;
+      padding: 16px;
+      border-radius: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3);
+      transition: all 0.3s ease;
+    }
 
-        .info b { display: block; text-transform: uppercase; font-size: 14px; color: var(--dark); }
-        .info span { font-size: 12px; color: #777; display: block; margin-top: 2px; }
-        
-        .hoy-badge { 
-            background: var(--error); 
-            color: white; 
-            padding: 3px 8px; 
-            border-radius: 6px; 
-            font-size: 10px; 
-            font-weight: bold; 
-            margin-top: 6px; 
-            display: inline-block; 
-        }
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
-        .actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-end;
-        }
+    #cameraInput {
+      display: none;
+    }
 
-        .btn-send { 
-            background: var(--wa); 
-            color: white; 
-            text-decoration: none; 
-            padding: 10px 16px; 
-            border-radius: 30px; 
-            font-size: 12px; 
-            font-weight: bold; 
-            text-align: center;
-            min-width: 80px;
-        }
-
-        .btn-no-wa {
-            background: #f4f4f4;
-            color: #666;
-            border: 1px solid #ddd;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn-no-wa:hover {
-            background: var(--error);
-            color: white;
-            border-color: var(--error);
-        }
-
-        #lista { max-height: 400px; overflow-y: auto; padding-right: 5px; }
-    </style>
+    .status-msg {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
 
-<ul class="slideshow">
-    <li></li><li></li><li></li>
-</ul>
+  <div class="container">
+    <h1>Subir Fotos a GitHub</h1>
 
-<div class="card">
-    <h2>RECUERDA CITAS CRED</h2>
-    
-    <div class="filtros">
-        <label>Rango de Fecha:</label>
-        <div style="display: flex; gap: 10px;">
-            <input type="date" id="fechaInicio">
-            <input type="date" id="fechaFin">
-        </div>
-        
-        <label>Turno de Atención:</label>
-        <select id="filtroTurno">
-            <option value="TODOS">TODOS LOS TURNOS</option>
-            <option value="Mañana">MAÑANA</option>
-            <option value="Tarde">TARDE</option>
-        </select>
-
-        <label>Establecimiento (EESS):</label>
-        <select id="filtroEESS">
-            <option value="TODOS">-- TODOS LOS EESS --</option>
-        </select>
-
-        <label>Consultorio:</label>
-        <select id="filtroConsultorio">
-            <option value="TODOS">-- TODOS LOS CONSULTORIOS --</option>
-        </select>
-
-        <label>Mensaje Adicional para todos:</label>
-        <textarea id="msgAdicional" class="extra-msg" rows="2" placeholder="Ej: Traer carnet físico y DNI del menor..."></textarea>
-
-        <button class="btn-main" onclick="cargarExcel()">Mostrar Listado</button>
+    <!-- Selección de Carpeta -->
+    <div class="form-group">
+      <label>Carpeta Destino</label>
+      <input type="text" id="folderNameInput" placeholder="Ej: 29092026 o NuevaCarpeta" value="29092026">
+      <small style="color: #64748b; font-size: 0.75rem; margin-top: 4px; display: block;">
+        Si la carpeta no existe, se creará automáticamente en GitHub.
+      </small>
     </div>
-    
-    <a id="btnSiguiente" href="#" target="_blank" class="btn-next" onclick="marcarSiguiente()">ENVIAR AL SIGUIENTE PACIENTE</a>
 
-    <div id="lista"></div>
-</div>
+    <!-- Botón de Disparo de Cámara Móvil -->
+    <label>Fotografía</label>
+    <div class="camera-trigger" onclick="document.getElementById('cameraInput').click()">
+      <i data-lucide="camera"></i>
+      <span style="font-weight: 700; font-size: 0.95rem;">Tomar Foto / Seleccionar</span>
+    </div>
 
-<script>
-    const URL_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-kCdER9NTPl29MALvc5Bam5N-UniBAH-OqP5GusOdT9wbJyQ5XQs-Qt66L6ds9ZxW1sUtZ9L7z4pW/pub?gid=0&single=true&output=csv';
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbye8k93u2HrGI6Y_LwD_4PVG7n-sGT49BD9CRoD-JuBAInplvX-yJ1jdnKJFPosLwM/exec'; // <--- PEGA TU URL DE GOOGLE SCRIPT AQUÍ
-    
-    let pacientesGlobal = [];
-    let indiceActual = 0;
+    <!-- Captura por cámara directa -->
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="mostrarVistaPrevia(event)">
 
-    window.onload = function() {
-        Papa.parse(URL_CSV, {
-            download: true,
-            header: true,
-            complete: function(res) {
-                const selectEESS = document.getElementById('filtroEESS');
-                const eessUnicos = [...new Set(res.data.map(p => p.EESS).filter(Boolean))];
-                eessUnicos.sort().forEach(eess => {
-                    let opt = document.createElement('option');
-                    opt.value = eess;
-                    opt.innerHTML = eess;
-                    selectEESS.appendChild(opt);
-                });
+    <!-- Previsualización -->
+    <div class="preview-container" id="previewContainer">
+      <img id="imagePreview" src="" alt="Previsualización">
+    </div>
 
-                const selectCons = document.getElementById('filtroConsultorio');
-                const consUnicos = [...new Set(res.data.map(p => p.CONSULTORIO).filter(Boolean))];
-                consUnicos.sort().forEach(c => {
-                    let opt = document.createElement('option');
-                    opt.value = c;
-                    opt.innerHTML = c;
-                    selectCons.appendChild(opt);
-                });
-            }
-        });
-    };
+    <!-- Botón de Envío -->
+    <button class="btn-submit" id="uploadBtn" onclick="subirImagen()" disabled>
+      <i data-lucide="upload-cloud"></i> Subir e Integrar a Galería
+    </button>
 
-    function cargarExcel() {
-        const fInicio = document.getElementById('fechaInicio').value;
-        const fFin = document.getElementById('fechaFin').value;
-        const turnoSeleccionado = document.getElementById('filtroTurno').value;
-        const eessSeleccionado = document.getElementById('filtroEESS').value;
-        const consultorioSeleccionado = document.getElementById('filtroConsultorio').value;
+    <div class="status-msg" id="statusMessage"></div>
+  </div>
 
-        if (!fInicio || !fFin) {
-            alert("Por favor, selecciona un rango de fechas.");
-            return;
-        }
+  <script>
+    // PEGA AQUÍ LA URL OBTENIDA DE GOOGLE APPS SCRIPT
+    const APPS_SCRIPT_URL = "TU_URL_DE_GOOGLE_APPS_SCRIPT";
 
-        Papa.parse(URL_CSV, {
-            download: true,
-            header: true,
-            skipEmptyLines: true,
-            complete: function(res) {
-                pacientesGlobal = res.data.filter(p => {
-                    if (!p['FECHA DE CITA'] || !p.CELULAR || !p.TURNO) return false;
-                    
-                    const partes = p['FECHA DE CITA'].split('/');
-                    const fechaPaciente = new Date(partes[2], partes[1] - 1, partes[0]);
-                    const dInicio = new Date(fInicio + "T00:00:00");
-                    const dFin = new Date(fFin + "T23:59:59");
-                    
-                    const cumpleFecha = fechaPaciente >= dInicio && fechaPaciente <= dFin;
-                    const cumpleTurno = (turnoSeleccionado === "TODOS") || (p.TURNO.trim() === turnoSeleccionado);
-                    const cumpleEESS = (eessSeleccionado === "TODOS") || (p.EESS === eessSeleccionado);
-                    const cumpleCons = (consultorioSeleccionado === "TODOS") || (p.CONSULTORIO === consultorioSeleccionado);
+    let imagenBase64 = "";
+    let nombreArchivo = "";
 
-                    return cumpleFecha && cumpleTurno && cumpleEESS && cumpleCons;
-                });
-                indiceActual = 0;
-                mostrarLista();
-                prepararSiguiente();
-            }
-        });
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+
+    function mostrarVistaPrevia(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.getElementById('imagePreview');
+        img.src = e.target.result;
+        document.getElementById('previewContainer').style.display = 'block';
+
+        // Extraer base64 puro (sin el prefijo data:image/jpeg;base64,)
+        imagenBase64 = e.target.result.split(',')[1];
+        
+        // Generar un nombre único basado en la fecha/hora actual
+        const timestamp = new Date().getTime();
+        nombreArchivo = `IMG_${timestamp}.jpg`;
+
+        document.getElementById('uploadBtn').disabled = false;
+      };
+      reader.readAsDataURL(file);
     }
 
-    function mostrarLista() {
-        const div = document.getElementById('lista');
-        div.innerHTML = `<p style="text-align:center; color:#666; font-size: 13px; margin-bottom: 15px;">Pacientes: <b>${pacientesGlobal.length}</b></p>`;
-        const hoy = new Date();
-        const hoyStr = `${hoy.getDate().toString().padStart(2, '0')}/${(hoy.getMonth() + 1).toString().padStart(2, '0')}/${hoy.getFullYear()}`;
+    async function subirImagen() {
+      const folderName = document.getElementById('folderNameInput').value.trim();
+      const statusMsg = document.getElementById('statusMessage');
+      const uploadBtn = document.getElementById('uploadBtn');
 
-        pacientesGlobal.forEach((p, i) => {
-            const esHoy = (p['FECHA DE CITA'].trim() === hoyStr);
-            const item = document.createElement('div');
-            item.className = 'tarjeta';
-            item.id = `paciente-${i}`;
-            item.innerHTML = `
-                <div class="info">
-                    <b>${p.NOMBRE}</b>
-                    <span>📅 ${p['FECHA DE CITA']} | ⏰ ${p.TURNO}</span>
-                    <span style="font-size:10px; color:var(--dark); font-weight:bold;">📍 ${p.EESS} - CONS: ${p.CONSULTORIO}</span>
-                    ${esHoy ? '<span class="hoy-badge">CITA PARA HOY</span>' : ''}
-                </div>
-                <div class="actions">
-                    <a href="#" class="btn-send" onclick="enviarIndividual(${i})">ENVIAR</a>
-                    <button class="btn-no-wa" onclick="reportarError(${i})">❌ NO WA</button>
-                </div>
-            `;
-            div.appendChild(item);
+      if (!folderName) {
+        alert("Por favor ingresa o selecciona un nombre de carpeta.");
+        return;
+      }
+
+      uploadBtn.disabled = true;
+      statusMsg.style.color = "#38bdf8";
+      statusMsg.innerText = "Subiendo imagen a GitHub...";
+
+      const payload = {
+        folderName: folderName,
+        fileName: nombreArchivo,
+        fileData: imagenBase64
+      };
+
+      try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
         });
-    }
 
-    function prepararSiguiente() {
-        if (indiceActual < pacientesGlobal.length) {
-            const p = pacientesGlobal[indiceActual];
-            const btn = document.getElementById('btnSiguiente');
-            btn.href = generarLink(p);
-            btn.style.display = 'block';
-            btn.innerText = `SIGUIENTE: ${p.NOMBRE}`;
+        const result = await response.json();
+
+        if (result.status === "success") {
+          statusMsg.style.color = "#10b981";
+          statusMsg.innerText = "¡Foto subida con éxito! Actualizando la galería...";
+
+          // Resetear formulario
+          setTimeout(() => {
+            document.getElementById('previewContainer').style.display = 'none';
+            statusMsg.innerText = "";
+            document.getElementById('cameraInput').value = "";
+          }, 3000);
+
         } else {
-            document.getElementById('btnSiguiente').style.display = 'none';
+          throw new Error(result.message);
         }
-    }
 
-    function generarLink(p) {
-        const hoy = new Date();
-        const hoyStr = `${hoy.getDate().toString().padStart(2, '0')}/${(hoy.getMonth() + 1).toString().padStart(2, '0')}/${hoy.getFullYear()}`;
-        const esHoy = (p['FECHA DE CITA'].trim() === hoyStr);
-        const fechaTxt = esHoy ? "*HOY*" : `el *${p['FECHA DE CITA']}*`;
-        
-        const extraMsg = document.getElementById('msgAdicional').value.trim();
-        const textoExtra = extraMsg ? `\n\n📌 *Nota:* ${extraMsg}` : "";
-
-        const msg = `Le saludo del Centro de Salud *${p.EESS}*, mamita de *${p.NOMBRE}*, se le recuerda la cita CRED para el ${fechaTxt} en el turno *${p.TURNO}* en el *CONSULTORIO: ${p.CONSULTORIO}*. Por favor, no falte.${textoExtra}\n\nTambién le invitamos a nuestro sistema de RECUERDA CITAS CRED: https://desarrolloinfantiltemprano-dit.github.io/casita/\nPara recibir actualizaciones, únete al grupo: https://chat.whatsapp.com/FELCvT889zo265G8LkVkPY`;
-        
-        return `https://api.whatsapp.com/send?phone=51${p.CELULAR.trim()}&text=${encodeURIComponent(msg)}`;
+      } catch (err) {
+        statusMsg.style.color = "#ef4444";
+        statusMsg.innerText = "Error al subir la imagen. Inténtalo de nuevo.";
+        uploadBtn.disabled = false;
+      }
     }
-
-    function enviarIndividual(i) {
-        const p = pacientesGlobal[i];
-        window.open(generarLink(p), '_blank');
-        marcarComoEnviado(i);
-    }
-
-    function reportarError(i) {
-        const p = pacientesGlobal[i];
-        const tarjeta = document.getElementById(`paciente-${i}`);
-        
-        // Efecto visual de carga
-        tarjeta.style.borderLeft = "10px solid var(--error)";
-        
-        fetch(`${SCRIPT_URL}?errorNum=${p.CELULAR.trim()}`, { mode: 'no-cors' })
-            .then(() => {
-                alert(`Reportado: El número de ${p.NOMBRE} se marcó como 'SIN WHATSAPP' en el Excel.`);
-                marcarComoEnviado(i, true);
-            })
-            .catch(err => alert("Error al conectar con el Excel. Verifica la URL del Script."));
-    }
-
-    function marcarSiguiente() {
-        marcarComoEnviado(indiceActual);
-        indiceActual++;
-        setTimeout(prepararSiguiente, 1000);
-    }
-
-    function marcarComoEnviado(i, isError = false) {
-        const tarjeta = document.getElementById(`paciente-${i}`);
-        if(tarjeta) {
-            tarjeta.style.background = isError ? "#ffebee" : "#f0f0f0";
-            tarjeta.style.opacity = "0.6";
-            const btn = tarjeta.querySelector('.btn-send');
-            const btnErr = tarjeta.querySelector('.btn-no-wa');
-            if(btn) btn.style.display = "none";
-            if(btnErr) btnErr.style.display = "none";
-            
-            const check = document.createElement('span');
-            check.innerHTML = isError ? "❌ Marcado" : "✅ Enviado";
-            check.style.fontSize = "12px";
-            check.style.fontWeight = "bold";
-            check.style.color = isError ? "red" : "green";
-            tarjeta.querySelector('.actions').appendChild(check);
-        }
-    }
-</script>
+  </script>
 </body>
 </html>
